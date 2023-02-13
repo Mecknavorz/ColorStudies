@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from PIL import Image, ImageOps
 import math
 import os
-
+from pathlib import Path
 
 #----------
 # FUNCTIONS
@@ -36,7 +36,7 @@ def avgColor(path):
     #print("Number of Dimensions: {}".format(data.ndim))
     #print("Shape: {}".format(data.shape))
     #print(data)
-    #get the average along one axis (0 =  width, 1 = height)
+    #get the average along one axis (0 returns width size, 1 returns height size)
     avg0 = np.average(data, axis=1)
     #get the average across the remaining access to give us one RGB value
     avg1 = np.average(avg0, axis=0)
@@ -45,12 +45,50 @@ def avgColor(path):
     img.close()
     return avg1
 
+#average colors of the image along 
+def avgColorH(path):
+    img = Image.open(path)
+    data = np.asarray(img) #[H, W, [RGB]]
+    #print("Number of Dimensions: {}".format(data.ndim))
+    #print("Shape: {}".format(data.shape))
+    #print(data)
+    #get the average along one axis (0 =  width, 1 = height)
+    avg0 = np.average(data, axis=1)
+    img.close()
+    return avg0
 
 #-----------------------
 # CODE THAT DOES STUFF!!
 #-----------------------
 #get absolute paths of images we want to study
 test = getImages()
+#print(test)
+#get the height of the image
+img = Image.open(test[0])
+height = np.asarray(img).shape[0]
+img.close()
+#create an empty array to store the average color of each individual image's height
+allAvgs = np.empty([0, height, 3])
+index = 0
+#iterate over the images
+for f in test:
+    print("Processing: {i}/{t}".format(i=(index+1), t=len(test)))
+    #get the average color of the image
+    imavg = avgColorH(f)
+    imavg2 = np.array([imavg]) #turn it into the right shape
+    allAvgs = np.concatenate((allAvgs, imavg2), axis=0) #concatenate
+    #incriment the array
+    index = index + 1
+#return the average color of the iterated images
+#print(allAvgs)
+print("Average Color per height generated! Created output image in working directory.")
+havg = np.rint(np.average(allAvgs, axis=0)).astype(np.uint8) #make the values all neat and get the average
+havgImg = np.tile(havg, ((havg.shape[0] // 10), 1, 1)) #create an array of image size which we can turn into a picture
+out = Image.fromarray(havgImg)
+#determine where to save
+out.save("Average Color by Height.jpg")
+
+''' Single Color Average
 #create an empty array to store the average color of each individual image
 allAvgs = np.empty([0, 3])
 #keeps track of index for placement and reporting progress
@@ -67,6 +105,6 @@ for f in test:
 #return the average color of the iterated images
 #print(allAvgs)
 print("The average Color of these images is: {}".format(np.rint(np.average(allAvgs, axis=0))))
-    
+'''
 #print(test)
 #avgColor(input("Path to Image: "))
