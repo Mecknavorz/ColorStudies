@@ -12,6 +12,7 @@ from PIL import Image, ImageOps
 import math
 import os
 from pathlib import Path
+import time
 
 #----------
 # FUNCTIONS
@@ -57,12 +58,32 @@ def avgColorH(path):
     img.close()
     return avg0
 
+#count the #of times each color value showes up in an image
+#slow, might not even be what I need
+#takes about 33 seconds for 1 12MP image :/ :/
+def colorCount(path):
+    img = Image.open(path)
+    data = np.asarray(img)
+    tbr = np.zeros([3, 256]) #our 3 colors and the possible values they can have 0-255
+    #I'm not sure if there's a faster way to do this other than checking each pixel individually
+    start = time.time()
+    for w in data:
+        for c in w:
+            #increment the count for each of the colors
+            tbr[0, c[0]] += 1
+            tbr[1, c[1]] += 1
+            tbr[2, c[2]] += 1
+    print("Image processed in {:f} seconds".format(time.time() - start))
+    return tbr
+
 #-----------------------
 # CODE THAT DOES STUFF!!
 #-----------------------
 #get absolute paths of images we want to study
-test = getImages()
+#test = getImages()
 #print(test)
+colorCount(input("image path: "))
+''' Get the Average color relative to verticle position on the image
 #get the height of the image
 img = Image.open(test[0])
 height = np.asarray(img).shape[0]
@@ -87,6 +108,7 @@ havgImg = np.tile(havg, ((havg.shape[0] // 10), 1, 1)) #create an array of image
 out = Image.fromarray(havgImg)
 #determine where to save
 out.save("Average Color by Height.jpg")
+'''
 
 ''' Single Color Average
 #create an empty array to store the average color of each individual image
