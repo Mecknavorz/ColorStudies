@@ -22,12 +22,11 @@ import time
 def getImages():
     tbr = []
     root = input("Path to Images: ")  #the folder we wanna look in
-    #should eventually redo this to make sure it only takes images
-    #but there are only images in the folders I'm testing rn so nbd
     #might make it recursive eventually or at least make it scan sub directories for images
     for _, _, fnames in os.walk(root):
         for name in fnames:
-            tbr.append(os.path.join(root, name))
+            if name.endswith(('.jpg', '.png', 'jpeg')):
+                tbr.append(os.path.join(root, name))
     return tbr
 
 #average color of the entire image
@@ -80,10 +79,11 @@ def colorCount(path):
 # CODE THAT DOES STUFF!!
 #-----------------------
 #get absolute paths of images we want to study
-#test = getImages()
+test = getImages()
 #print(test)
-colorCount(input("image path: "))
-''' Get the Average color relative to verticle position on the image
+#colorCount(input("image path: "))
+
+'''#Get the Average color relative to verticle position on the image
 #get the height of the image
 img = Image.open(test[0])
 height = np.asarray(img).shape[0]
@@ -110,7 +110,7 @@ out = Image.fromarray(havgImg)
 out.save("Average Color by Height.jpg")
 '''
 
-''' Single Color Average
+'''#Single Color Average
 #create an empty array to store the average color of each individual image
 allAvgs = np.empty([0, 3])
 #keeps track of index for placement and reporting progress
