@@ -126,6 +126,7 @@ def colorCount(path):
             tbr[1, c[1]] += 1
             tbr[2, c[2]] += 1
     print("Image processed in {:f} seconds".format(time.time() - start))
+    img.close()
     return tbr
 
 #rezie an image to something smaller and save it
@@ -149,6 +150,7 @@ def shrinkImg(path, percent):
     #might need to convert path to (path(path.etc))
     saveloc = str(Path(path).parent.parent.absolute()) + "\\smol_master" + fname
     img.save(saveloc)
+    img.close()
 
 #prepares a given folder to be data processed by shrinking all files and saving them to a new location
 #shrinks all images to a given % size
@@ -161,6 +163,61 @@ def shrinkSet(listOfFiles, percent):
         index += 1
     print("All Images shrunk to {p}% size; Saved to: smol_master.".format(p=percent))
 
+#generate a basic pallet from an image
+def generatePallet(path):
+    start = time.time()
+    img = Image.open(path)
+    #limit is # of colors we want
+    #tolerance is how similiar colors can be
+    tbr = extcolors.extract_from_image(img, tolerance = 12, limit = 12)
+    img.close()
+    print("Image processed in {:f} seconds".format(time.time() - start))
+    #print(tbr
+    index = 1
+    total = 0
+    for i in tbr[0]:
+        percent = (i[1]/tbr[1])*100
+        total += percent
+        print("{j}. {c} covers {p}%".format(j=index, c=i[0], p=percent))
+        index += 1
+    print("for a total of {}% image coverage".format(total))
+    return tbr
+
+#graph the pallet we got
+def donutPallet(pallet):
+    totalpixel = pallet[1]
+    colors = []
+    rawpix = []
+    percents = []
+    text = []
+    total = 0
+    for i in pallet[0]:
+        chex = rgb2hex(i[0][0], i[0][1], i[0][2])
+        colors.append(chex) #track the color
+        rawpix.append(i[1]) #track the number of pixels that are the color
+        per = (i[1]/totalpixel)*100 #get percentage
+        total += per #track total
+        percents.append(per) #track what percent of image it is
+        text.append(str(chex) + ": " + str(round(per, 1)) + "%")
+    '''
+    print("colors: {}".format(colors))
+    print("percents: {}".format(percents))
+    print("text: {}".format(text))
+    print("total: {}".format(total))
+    '''
+    total = round(total, 2)
+    #set up the chart
+    explode = [0.05] * len(pallet[0])
+    plt.pie(percents, colors=colors, labels=text, autopct='%1.1f%%', pctdistance=0.85, explode=explode)
+    #draw circle
+    center_circle = plt.Circle((0,0), 0.70, fc="white")
+    fig = plt.gcf()
+    #add circle into the chart
+    fig.gca().add_artist(center_circle)
+    #title
+    plt.title("Pallet of size {n}, covering {p}%".format(n=len(pallet[0]), p=total))
+    plt.show()
+
 #-----------------------
 # CODE THAT DOES STUFF!!
 #-----------------------
@@ -168,8 +225,9 @@ if __name__ == "__main__":
     #get absolute paths of images we want to study
     test = getImages()
     #print(test)
+    donutPallet(generatePallet(test[0]))
     #process the images
-    shrinkSet(test, .25)
+    #shrinkSet(test, .25)
     #colorCount(input("image path: "))
     #print(test)
     #avgColor(input("Path to Image: "))
