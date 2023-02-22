@@ -151,6 +151,7 @@ def shrinkImg(path, percent):
     saveloc = str(Path(path).parent.parent.absolute()) + "\\smol_master" + fname
     img.save(saveloc)
     img.close()
+    return
 
 #prepares a given folder to be data processed by shrinking all files and saving them to a new location
 #shrinks all images to a given % size
@@ -162,6 +163,7 @@ def shrinkSet(listOfFiles, percent):
         shrinkImg(file, percent) #actually shrink the images
         index += 1
     print("All Images shrunk to {p}% size; Saved to: smol_master.".format(p=percent))
+    return
 
 #generate a basic pallet from an image
 def generatePallet(path):
@@ -182,6 +184,9 @@ def generatePallet(path):
         index += 1
     print("for a total of {}% image coverage".format(total))
     '''
+    #shape of tbr is:
+    #tbr[0] is all the colors in the pallet
+    #tbr[1] is the total pixel count
     return tbr
 
 #graph the pallet we got into a donut
@@ -218,8 +223,11 @@ def donutPallet(pallet):
     #title
     plt.title("Pallet of size {n}, covering {p}%".format(n=len(pallet[0]), p=total))
     plt.show()
+    return
 
 #grabg a bunch of pallets from the entire data set
+#seems to cause memory erros a lot, even with low count data, check setup and redo code here maybe
+#could try running on rig to fix first problem
 def allPallets(listOfFiles):
     pallets = [] #for
     index = 0
@@ -238,7 +246,7 @@ if __name__ == "__main__":
     test = getImages()
     #print(test)
     #donutPallet(generatePallet(test[0]))
-    allPallets(test)
+    pallets = allPallets(test)
     #process the images
     #shrinkSet(test, .25)
     #colorCount(input("image path: "))
