@@ -172,18 +172,19 @@ def generatePallet(path):
     tbr = extcolors.extract_from_image(img, tolerance = 12, limit = 12)
     img.close()
     print("Image processed in {:f} seconds".format(time.time() - start))
-    #print(tbr
     index = 1
     total = 0
+    '''
     for i in tbr[0]:
         percent = (i[1]/tbr[1])*100
         total += percent
         print("{j}. {c} covers {p}%".format(j=index, c=i[0], p=percent))
         index += 1
     print("for a total of {}% image coverage".format(total))
+    '''
     return tbr
 
-#graph the pallet we got
+#graph the pallet we got into a donut
 def donutPallet(pallet):
     totalpixel = pallet[1]
     colors = []
@@ -218,6 +219,17 @@ def donutPallet(pallet):
     plt.title("Pallet of size {n}, covering {p}%".format(n=len(pallet[0]), p=total))
     plt.show()
 
+#grabg a bunch of pallets from the entire data set
+def allPallets(listOfFiles):
+    pallets = [] #for
+    index = 0
+    for f in listOfFiles:
+        print("Processing: {i}/{t}".format(i=(index+1), t=len(listOfFiles)))
+        #generate the pallet for the image and append it
+        pallets.append(generatePallet(f))
+        index += 1
+    return pallets
+        
 #-----------------------
 # CODE THAT DOES STUFF!!
 #-----------------------
@@ -225,7 +237,8 @@ if __name__ == "__main__":
     #get absolute paths of images we want to study
     test = getImages()
     #print(test)
-    donutPallet(generatePallet(test[0]))
+    #donutPallet(generatePallet(test[0]))
+    allPallets(test)
     #process the images
     #shrinkSet(test, .25)
     #colorCount(input("image path: "))
