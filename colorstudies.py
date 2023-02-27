@@ -187,6 +187,9 @@ def generatePallet(path):
     #shape of tbr is:
     #tbr[0] is all the colors in the pallet
     #tbr[1] is the total pixel count
+    #tbr[0][n] is a color and the number of pixels it shows up in
+    #tbr[0][n][0] is is the rbg values (r, g, b)
+    #tbr[0][n][1] is the number of pixels it shows up in
     return tbr
 
 #graph the pallet we got into a donut
@@ -237,7 +240,32 @@ def allPallets(listOfFiles):
         pallets.append(generatePallet(f))
         index += 1
     return pallets
-        
+
+#for graphing and displaying data on a group of pallets
+def graphPallets(pallets):
+    #make sure it's in 3d
+    #plt.style.use('_mpl-gallery')
+    xs = []
+    ys = []
+    zs = []
+    #iterate over our pallets
+    for p in pallets:
+        #iterate over the collors in the pallets
+        for c in p[0]:
+            #c[0] is the color, c[1] is the #of pixels - tested
+            #append the colors to our axis
+            xs.append(c[0][0])
+            ys.append(c[0][1])
+            zs.append(c[0][2])
+    
+    # Plot
+    fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+    ax.scatter(xs, ys, zs)
+    ax.set(xticklabels=[], yticklabels=[], zticklabels=[])
+    plt.show()
+    print("Graph completed!")
+    return
+
 #-----------------------
 # CODE THAT DOES STUFF!!
 #-----------------------
@@ -247,6 +275,7 @@ if __name__ == "__main__":
     #print(test)
     #donutPallet(generatePallet(test[0]))
     pallets = allPallets(test)
+    graphPallets(pallets)
     #process the images
     #shrinkSet(test, .25)
     #colorCount(input("image path: "))
