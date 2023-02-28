@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.image as mpimg
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+#from mpl_toolkits.mplot3d import Axes3D
 from PIL import Image, ImageOps
 import math
 import os
@@ -245,9 +246,12 @@ def allPallets(listOfFiles):
 def graphPallets(pallets):
     #make sure it's in 3d
     #plt.style.use('_mpl-gallery')
+    #x, y z, coords: all various color values
     xs = []
     ys = []
     zs = []
+    #hex values of the above colors so we can use them for visualization
+    cs = []
     #iterate over our pallets
     for p in pallets:
         #iterate over the collors in the pallets
@@ -257,19 +261,51 @@ def graphPallets(pallets):
             xs.append(c[0][0])
             ys.append(c[0][1])
             zs.append(c[0][2])
+            #convert the color to hex so we can display it when graphed
+            chex = rgb2hex(c[0][0], c[0][1], c[0][2])
+            cs.append(chex)
     
-    # Plot
+    #actual code for for the plot
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"}) #make sure it's 3d
-    ax.scatter(xs, ys, zs) #add the data to the scatter plot
+    #change the background color so we can more easily see what's going on
+    #remove defualt fill
+    ax.w_xaxis.set_pane_color((0.0, .75, 0.0, 0.5))
+    ax.w_yaxis.set_pane_color((.75, 0.0, 0.0, 0.5))
+    ax.w_zaxis.set_pane_color((0.0, 0.0, .75, 0.5))
+    '''
+    ax.xaxis.set_pane_color('m', alpha=1)
+    ax.yaxis.set_pane_color('m', alpha=1)
+    ax.zaxis.set_pane_color('m', alpha=1)
+    #set the colors
+    ax.xaxis.pane.set_edgecolor('m')
+    ax.yaxis.pane.set_edgecolor('m')
+    ax.zaxis.pane.set_edgecolor('m')
+    '''
+    #coords are obv (xz,ys,zs), colors sets color, alpha should help with visibility
+    ax.scatter(xs, ys, zs, c=cs, alpha=1) #add the data to the scatter plot
     ax.set(xticklabels=[], yticklabels=[], zticklabels=[])
+
+    #make sure all the labels look nice and inform you what's going on
+    #x axis (red values)
+    ax.set_xlabel("Red value (0-255)") #axis label
+    ax.set_xticks([0, 32, 64, 96, 128, 160, 192, 224, 255]) #where to place tick marks
+    ax.set_xticklabels(["0","32", "64", "96", "128", "160", "192", "224", "255"]) #to make SURE THEY ARE LABELED!!!
+
+    #y axis (green values)
+    ax.set_ylabel("Green value (0-255)") #axis label
+    ax.set_yticks([0, 32, 64, 96, 128, 160, 192, 224, 255]) #where to place tick marks
+    ax.set_yticklabels(["0","32", "64", "96", "128", "160", "192", "224", "255"]) #labels
+
+    #z labels (blue)
+    ax.set_zlabel("Blue value (0-255)") #axis label
+    ax.set_zticks([0, 32, 64, 96, 128, 160, 192, 224, 255]) #where to place tick marks
+    ax.set_zticklabels(["0","32", "64", "96", "128", "160", "192", "224", "255"]) #labels
+
     #title our graph
     plt.title("Colors from {n} pallets of size {s}".format(n=len(pallets), s=len(pallets[0][0])))
-    #set the axis labels
-    ax.set_xlabel("Red value (0-255)")
-    ax.set_ylabel("Green value (0-255)")
-    ax.set_zlabel("Blue value (0-255)")
-    plt.show()
+    #show the final graph!
     print("Graph completed!")
+    plt.show()
     return
 
 #-----------------------
