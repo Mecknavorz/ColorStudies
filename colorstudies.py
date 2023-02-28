@@ -259,9 +259,15 @@ def graphPallets(pallets):
             zs.append(c[0][2])
     
     # Plot
-    fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-    ax.scatter(xs, ys, zs)
+    fig, ax = plt.subplots(subplot_kw={"projection": "3d"}) #make sure it's 3d
+    ax.scatter(xs, ys, zs) #add the data to the scatter plot
     ax.set(xticklabels=[], yticklabels=[], zticklabels=[])
+    #title our graph
+    plt.title("Colors from {n} pallets of size {s}".format(n=len(pallets), s=len(pallets[0][0])))
+    #set the axis labels
+    ax.set_xlabel("Red value (0-255)")
+    ax.set_ylabel("Green value (0-255)")
+    ax.set_zlabel("Blue value (0-255)")
     plt.show()
     print("Graph completed!")
     return
