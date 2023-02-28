@@ -268,19 +268,11 @@ def graphPallets(pallets):
     #actual code for for the plot
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"}) #make sure it's 3d
     #change the background color so we can more easily see what's going on
-    #remove defualt fill
-    ax.w_xaxis.set_pane_color((0.0, .75, 0.0, 0.5))
-    ax.w_yaxis.set_pane_color((.75, 0.0, 0.0, 0.5))
-    ax.w_zaxis.set_pane_color((0.0, 0.0, .75, 0.5))
-    '''
-    ax.xaxis.set_pane_color('m', alpha=1)
-    ax.yaxis.set_pane_color('m', alpha=1)
-    ax.zaxis.set_pane_color('m', alpha=1)
-    #set the colors
-    ax.xaxis.pane.set_edgecolor('m')
-    ax.yaxis.pane.set_edgecolor('m')
-    ax.zaxis.pane.set_edgecolor('m')
-    '''
+    #change the colors of the planes to make the data easier to see
+    ax.w_xaxis.set_pane_color((0.0, .75, 0.0, 0.25))
+    ax.w_yaxis.set_pane_color((.75, 0.0, 0.0, 0.25))
+    ax.w_zaxis.set_pane_color((0.0, 0.0, .75, 0.25))
+
     #coords are obv (xz,ys,zs), colors sets color, alpha should help with visibility
     ax.scatter(xs, ys, zs, c=cs, alpha=1) #add the data to the scatter plot
     ax.set(xticklabels=[], yticklabels=[], zticklabels=[])
