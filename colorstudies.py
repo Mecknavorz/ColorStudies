@@ -300,6 +300,34 @@ def graphPallets(pallets):
     plt.show()
     return
 
+#calculate the relative luminance of an RBG value
+#not sure how useful this function is but it'll be helpful for remembering the weights of the function
+#if needed we can prolly take those and do whole image relative luminance transforms using numpy and stuff
+#according to sources: this method works best when abosulte reproduction is impractical, like print ect
+#since this stuff needs to work under varios lighting conditions it should work here too?
+def getRL(r, g, b):
+    R, G, B = 0
+    r2 = r/255
+    g2 = g/255
+    g2 = b/255
+    if r2 < .03928:
+        R = r2/12.92
+    else:
+        R = ((r2 + 0.055)/1.055) ** 2.4
+    if g2 < .03928:
+        G = g2/12.92
+    else:
+        G = ((g2 + 0.055)/1.055) ** 2.4
+    if b2 < .03928:
+        B = b2/12.92
+    else:
+        B = ((b2 + 0.055)/1.055) ** 2.4
+    return (.2126*R)+(.7152*G)+(.0722*B)
+#alternate weighting I found, seems ideal for returning values 0-255?
+#needs testing
+def getRL255(r, g, b):
+    return (0.3*r)+(.59*g)+(.11*b)
+
 #-----------------------
 # CODE THAT DOES STUFF!!
 #-----------------------
