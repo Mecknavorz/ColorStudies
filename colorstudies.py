@@ -22,10 +22,10 @@ import cv2
 import extcolors
 from colormap import rgb2hex
 
+
 #----------
 # FUNCTIONS
 #----------
-
 #generate a list of all images in a folder
 def getImages():
     tbr = []
@@ -335,9 +335,9 @@ def getRL255(r, g, b):
 def graphRL1(pallets):
     print("Generating graph of pallet relative luminance")
     start = time.time() #record starting time
-    colors = np.empty[0, 3]
+    colors = np.empty([0, 3])
     #hex values of the above colors so we can use them for visualization
-    cs = np.empty[0]
+    ch = []
     #x1 = luminance algorithm 1
     #x2 = luminance algorithm 2
     x1 = []
@@ -348,24 +348,43 @@ def graphRL1(pallets):
         for c in p[0]:
             #c[0] is the color, c[1] is the #of pixels - tested
             #append the colors to an array
-            c = np.array([c[0][0], c[0][1], c[0][2]])
+            c = np.array([[c[0][0], c[0][1], c[0][2]]])
             #add our color to the master list
             colors = np.concatenate((colors, c), axis=0)
-            #convert the color to hex so we can display it when graphed
-            #chex = rgb2hex(c[0][0], c[0][1], c[0][2])
-            #cs.append(chex)
     #remove duplicate colors
-    c2 = np.unique(colors, axis=0)
-    print("Removed d duplicates in s seconds".format(d = (len(colors)-len(colors2)), s = (time.time()-start)))
-    c2t = numpy.transpose(c2)
+    c2 = np.rint(np.unique(colors, axis=0)).astype(np.uint8)
+    print("Removed {d} duplicates in {s} seconds".format(d = (len(colors)-len(c2)), s = (time.time()-start)))
     #generate hex values for graphing
-    cs = rgb2hex(c2t[0], c2t[1], c2t[2])
-    x1 = 
+    for h in c2:
+        ch.append(rgb2hex(h[0], h[1], h[2]))
+    return ch
 
 #grapg relative luminance vs avg space taken up
 #x = luminance y = aveage space taken up by colors of that luminance
 def graphRL2(pallets):
-    print("Oops! just a placeholder!")
+    print("Graphing relative luminance of colors relative to area they take up")
+    start = time.time() #record starting time
+    colors = np.empty([0, 3])
+    #hex values of the above colors so we can use them for visualization
+    ch = []
+    #x1 = luminance algorithm 1
+    #x2 = luminance algorithm 2
+    x1 = []
+    x2 = []
+    #iterate over our pallets
+    for p in pallets:
+        #iterate over the collors in the pallets
+        for c in p[0]:
+            #c[0] is the color, c[1] is the #of pixels - tested
+            #append the colors to an array
+            c = np.array([[c[0][0], c[0][1], c[0][2]]])
+            #add our color to the master list
+            colors = np.concatenate((colors, c), axis=0)
+            #track the amount of space it takes up
+            csize.append(c[1]/p[1])
+    #generate hex values for graphing
+    for h in c2:
+        ch.append(rgb2hex(h[0], h[1], h[2]))
     return
 #-----------------------
 # CODE THAT DOES STUFF!!
@@ -376,7 +395,8 @@ if __name__ == "__main__":
     #print(test)
     #donutPallet(generatePallet(test[0]))
     pallets = allPallets(test)
-    graphPallets(pallets)
+    cs = graphRL1(pallets)
+    #graphPallets(pallets)
     #process the images
     #shrinkSet(test, .25)
     #colorCount(input("image path: "))
